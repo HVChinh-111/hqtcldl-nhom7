@@ -72,10 +72,6 @@ Với quy mô là một Bệnh viện tư nhân cỡ vừa / Phòng khám đa kh
 | **Xét nghiệm Pap Smear**                         | OBSTETRICS (Sản khoa) | Phết tế bào cổ tử cung để tầm soát ung thư. **Lưu ý:** Thủ thuật này thường mất 3-5 ngày mới có kết quả (rất tốt để làm data cho thời gian chờ lâu). | 400.000                        |
 | **Nội soi dạ dày (không gây mê)**                | GENERAL               | Sử dụng ống soi mềm kiểm tra thực quản, dạ dày. Thời gian thực hiện và chờ kết quả mức độ trung bình (khoảng 45 - 60 phút).                          | 600.000                        |
 
-Với mô hình phòng khám đa khoa ngoại trú, việc kê đơn thuốc sẽ chủ yếu diễn ra ở 4 khoa lâm sàng: **Khoa Khám bệnh & Nội tổng hợp, Khoa Nhi, Khoa Sản phụ khoa, và Khoa Tai Mũi Họng**. (Hai khoa Cận lâm sàng là Xét nghiệm và Chẩn đoán hình ảnh thường chỉ trả kết quả, hiếm khi trực tiếp kê đơn mang về).
-
-Dưới đây là danh mục thuốc thật đầy đủ và tiêu biểu nhất cho mô hình ngoại trú, được tổng hợp dựa trên các mặt bệnh phổ biến mà 4 khoa trên thường xuyên tiếp nhận. Dữ liệu này rất lý tưởng để bạn `INSERT` vào bảng `medicines` làm dữ liệu giả (synthetic data) cho Data Warehouse.
-
 ##### Danh mục thuốc (Medicines Catalog):
 
 | Name (Tên thuốc)                 | Strength (Liều lượng/Nồng độ) | Unit (Đơn vị đóng gói) | Is_active | Nhóm / Khoa thường kê (Ghi chú thêm)               |
