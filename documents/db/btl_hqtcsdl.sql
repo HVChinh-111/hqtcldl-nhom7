@@ -86,7 +86,7 @@ CREATE TABLE dbo.encounters(
 	diagnosis TEXT,
 	symptom TEXT,
 	notes TEXT,
-	fee DECIMAL(10,2),
+	fee DECIMAL(18,0),
 	FOREIGN KEY(app_id) REFERENCES appointments(app_id),
 	CHECK(end_time>start_time)
 );
@@ -98,7 +98,7 @@ CREATE TABLE dbo.procedure_catalogs(
 	name TEXT NOT NULL,
 	type VARCHAR(50),
 	description TEXT,
-    default_price DECIMAL(10,2) NOT NULL,
+    default_price DECIMAL(18,0) NOT NULL,
     is_active int CHECK(is_active in(0,1)) DEFAULT 1
 );
 
@@ -156,7 +156,7 @@ CREATE TABLE dbo.payments(
     payment_id INT PRIMARY KEY IDENTITY(1,1),
     encounter_id INT NOT NULL,
     s_person_id INT NOT NULL,
-    amount DECIMAL(10,2) NOT NULL,
+    amount DECIMAL(18,0) NOT NULL,
     method VARCHAR(36) CHECK(method in ('CASH', 'CARD', 'EWALLET')) NOT NULL,
     pay_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (encounter_id) REFERENCES encounters(encounter_id),
