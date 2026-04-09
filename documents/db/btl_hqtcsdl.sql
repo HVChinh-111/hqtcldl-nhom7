@@ -10,18 +10,18 @@ GO
 IF OBJECT_ID('dbo.persons','U') IS NULL
 CREATE TABLE dbo.persons (
 	person_id INT PRIMARY KEY IDENTITY(1,1),
-	name VARCHAR(50) NOT NULL,
+	name NVARCHAR(50) NOT NULL,
 	dob DATE NOT NULL,
-	sex VARCHAR(36) NOT NULL CHECK(sex in ('MALE','FEMALE')),
-	tel VARCHAR(10) NOT NULL CHECK(LEN(tel)=10),
-	address VARCHAR(255),
-	password VARCHAR(30) NOT NULL
+	sex NVARCHAR(36) NOT NULL CHECK(sex in ('MALE','FEMALE')),
+	tel NVARCHAR(10) NOT NULL CHECK(LEN(tel)=10),
+	address NVARCHAR(255),
+	password NVARCHAR(30) NOT NULL
 );
 -- 2. person_roles
 IF OBJECT_ID('dbo.person_roles','U') IS NULL
 CREATE TABLE dbo.person_roles(
 	person_id INT NOT NULL,
-	role varchar(36) NOT NULL CHECK(role in ('DOCTOR','PATIENT','STAFF')),
+	role NVARCHAR(36) NOT NULL CHECK(role in ('DOCTOR','PATIENT','STAFF')),
 	PRIMARY KEY(person_id,role),
 	FOREIGN KEY(person_id) REFERENCES persons(person_id)
 );
@@ -29,8 +29,8 @@ CREATE TABLE dbo.person_roles(
 IF OBJECT_ID('dbo.doctors','U') IS NULL
 CREATE TABLE dbo.doctors(
 	d_person_id INT PRIMARY KEY,
-	speciality VARCHAR(30),
-	level VARCHAR(36) NOT NULL CHECK(level in ('STANDARD', 'PROFESSOR')),
+	speciality NVARCHAR(30),
+	level NVARCHAR(36) NOT NULL CHECK(level in ('STANDARD', 'PROFESSOR')),
 	FOREIGN KEY (d_person_id) REFERENCES persons(person_id)
 );
 -- 4.patients
@@ -55,7 +55,7 @@ CREATE TABLE dbo.time_slots(
 	start_time DATETIME NOT NULL,
 	end_time DATETIME NOT NULL,
 	-- cai nay phai co defaut chu =))
-	status VARCHAR(36) NOT NULL CHECK(status in ('AVAILABLE', 'BOOKED', 'BLOCKED')),
+	status NVARCHAR(36) NOT NULL CHECK(status in ('AVAILABLE', 'BOOKED', 'BLOCKED')),
 	is_active INT CHECK(is_active in (0,1)) DEFAULT 1,
     FOREIGN KEY (d_person_id) REFERENCES doctors(d_person_id),
     UNIQUE (d_person_id, start_time, end_time),
@@ -69,7 +69,7 @@ CREATE TABLE dbo.appointments(
 	s_person_id INT NOT NULL,
 	p_person_id INT NOT NULL,
 	slot_id INT NOT NULL,
-	status VARCHAR(36) NOT NULL CHECK(status in('BOOKED', 'CHECKED_IN', 'CANCELLED', 'NO_SHOW')),
+	status NVARCHAR(36) NOT NULL CHECK(status in('BOOKED', 'CHECKED_IN', 'CANCELLED', 'NO_SHOW')),
     FOREIGN KEY (s_person_id) REFERENCES staffs(s_person_id),
     FOREIGN KEY (p_person_id) REFERENCES patients(p_person_id),
     FOREIGN KEY (slot_id) REFERENCES time_slots(slot_id),
@@ -83,9 +83,9 @@ CREATE TABLE dbo.encounters(
 	app_id INT NOT NULL UNIQUE,
 	start_time DATETIME,
 	end_time DATETIME,
-	diagnosis TEXT,
-	symptom TEXT,
-	notes TEXT,
+	diagnosis NVARCHAR(MAX),
+	symptom NVARCHAR(MAX),
+	notes NVARCHAR(MAX),
 	fee DECIMAL(18,0),
 	FOREIGN KEY(app_id) REFERENCES appointments(app_id),
 	CHECK(end_time>start_time)
@@ -95,21 +95,20 @@ CREATE TABLE dbo.encounters(
 IF OBJECT_ID('dbo.procedure_catalogs','U') IS NULL
 CREATE TABLE dbo.procedure_catalogs(
 	procedure_id INT PRIMARY KEY IDENTITY(1,1),
-	name TEXT NOT NULL,
-	type VARCHAR(50),
-	description TEXT,
+	name NVARCHAR(MAX) NOT NULL,
+	type NVARCHAR(50),
+	description NVARCHAR(MAX),
     default_price DECIMAL(18,0) NOT NULL,
     is_active int CHECK(is_active in(0,1)) DEFAULT 1
 );
-
 -- 10. procedure_orders
 IF OBJECT_ID('dbo.procedure_orders','U') IS NULL
 CREATE TABLE dbo.procedure_orders(
 	porder_id INT PRIMARY KEY IDENTITY(1,1),
 	encounter_id INT NOT NULL,
 	procedure_id INT NOT NULL,
-	status VARCHAR(36) NOT NULL CHECK(status in ('REQUESTED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED')),
-	result TEXT,
+	status NVARCHAR(36) NOT NULL CHECK(status in ('REQUESTED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED')),
+	result NVARCHAR(MAX),
 	start_time DATETIME NOT NULL,
 	end_time DATETIME,
     FOREIGN KEY (encounter_id) REFERENCES encounters(encounter_id),
@@ -122,7 +121,7 @@ IF OBJECT_ID('dbo.prescriptions','U') IS NULL
 CREATE TABLE dbo.prescriptions(
     prescription_id INT PRIMARY KEY IDENTITY(1,1),
     encounter_id INT UNIQUE,
-    title VARCHAR(100),
+    title NVARCHAR(100),
     FOREIGN KEY (encounter_id) REFERENCES encounters(encounter_id)
 );
 
@@ -130,9 +129,9 @@ CREATE TABLE dbo.prescriptions(
 IF OBJECT_ID('dbo.medicines','U') IS NULL
 CREATE TABLE dbo.medicines(
     medicine_id INT PRIMARY KEY IDENTITY(1,1),
-    name VARCHAR(100),
-    strength VARCHAR(50),
-    unit VARCHAR(50),
+    name NVARCHAR(100),
+    strength NVARCHAR(50),
+    unit NVARCHAR(50),
     is_active INT CHECK(is_active in(0,1)) DEFAULT 1
 );
 
@@ -142,7 +141,7 @@ IF OBJECT_ID('dbo.prescription_lines','U') IS NULL
 CREATE TABLE dbo.prescription_lines(
     prescription_id INT NOT NULL,
     medicine_id INT NOT NULL,
-    dosage VARCHAR(50) NOT NULL,
+    dosage NVARCHAR(50) NOT NULL,
     quantity INT NOT NULL,
 	PRIMARY KEY (prescription_id, medicine_id),
     FOREIGN KEY (prescription_id) REFERENCES prescriptions(prescription_id),
@@ -157,7 +156,7 @@ CREATE TABLE dbo.payments(
     encounter_id INT NOT NULL,
     s_person_id INT NOT NULL,
     amount DECIMAL(18,0) NOT NULL,
-    method VARCHAR(36) CHECK(method in ('CASH', 'CARD', 'EWALLET')) NOT NULL,
+    method NVARCHAR(36) CHECK(method in ('CASH', 'CARD', 'EWALLET')) NOT NULL,
     pay_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (encounter_id) REFERENCES encounters(encounter_id),
     FOREIGN KEY (s_person_id) REFERENCES staffs(s_person_id)
