@@ -1,4 +1,4 @@
-USE btl_database;
+USE btl_database3;
 GO
 
 -- ==============================================================================
@@ -200,6 +200,7 @@ INSERT INTO @ValidTimes (H, M) VALUES
 
 DECLARE @total_encounters INT = 2000;
 DECLARE @current_enc INT = 1;
+DECLARE @max_proc_end DATETIME;
 
 WHILE @current_enc <= @total_encounters
 BEGIN
@@ -252,6 +253,8 @@ BEGIN
 
     DECLARE @doc_fee DECIMAL(18,0) = IIF(@doc_level = 'PROFESSOR', 500000, 300000);
     DECLARE @enc_start DATETIME = DATEADD(MINUTE, ABS(CHECKSUM(NEWID())) % 10, @slot_start); 
+    
+    -- Khám lâm sàng bước 1
     DECLARE @enc_end DATETIME = DATEADD(MINUTE, 10 + (ABS(CHECKSUM(NEWID())) % 10), @enc_start); 
 
     DECLARE @symptom NVARCHAR(MAX) = N'Đau mỏi chung';
@@ -278,6 +281,7 @@ BEGIN
         SET @diagnosis = N'Tăng huyết áp vô căn, Rối loạn mỡ máu';
     END
 
+    -- Insert bản ghi encounters tạm thời
     INSERT INTO encounters (app_id, start_time, end_time, symptom, diagnosis, notes, fee)
     VALUES (@app_id, @enc_start, @enc_end, @symptom, @diagnosis, N'Bệnh nhân tuân thủ phác đồ điều trị', @doc_fee);
     DECLARE @enc_id INT = SCOPE_IDENTITY();
@@ -311,6 +315,18 @@ BEGIN
                 (@doc_spec IN ('General Internal', 'Laboratory', 'Diagnostic Imaging') AND procedure_id IN (1,2,3,5,6,8,9,15))
             ORDER BY NEWID()
         ) T;
+
+        -- Lấy thời gian kết thúc thủ thuật muộn nhất
+        SET @max_proc_end = NULL;
+        SELECT @max_proc_end = MAX(end_time) FROM procedure_orders WHERE encounter_id = @enc_id;
+        
+        IF @max_proc_end IS NOT NULL
+        BEGIN
+            -- Cập nhật thời gian kết thúc: Cộng thêm 20 đến 90 phút sau khi có kết quả
+            SET @enc_end = DATEADD(MINUTE, 20 + (ABS(CHECKSUM(NEWID())) % 71), @max_proc_end);
+            
+            UPDATE encounters SET end_time = @enc_end WHERE encounter_id = @enc_id;
+        END
 
         SELECT @total_proc_cost = ISNULL(SUM(default_price), 0)
         FROM procedure_catalogs pc JOIN procedure_orders po ON pc.procedure_id = po.procedure_id
