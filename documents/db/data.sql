@@ -1,4 +1,4 @@
-USE btl_database3;
+USE btl_database;
 GO
 
 -- ==============================================================================
@@ -158,7 +158,7 @@ INSERT INTO doctors (d_person_id, speciality, level) VALUES
 GO
 
 -- ==============================================================================
--- 4. SINH DỮ LIỆU ĐỘNG: 800 BỆNH NHÂN VÀ 2000 CA KHÁM 
+-- 4. SINH DỮ LIỆU ĐỘNG: 800 BỆNH NHÂN VÀ 2000 CA KHÁM
 -- ==============================================================================
 SET NOCOUNT ON;
 PRINT N'Đang khởi tạo 800 Bệnh nhân (Patients)...';
@@ -168,33 +168,34 @@ DECLARE @pid INT;
 
 WHILE @idx <= 800
 BEGIN
-    INSERT INTO persons (name, dob, sex, tel, address, password)
-    VALUES (
-        N'Bệnh nhân ' + CAST(@idx AS VARCHAR),
-        DATEADD(DAY, - (ABS(CHECKSUM(NEWID())) % 25000) - 1000, GETDATE()), 
-        IIF(@idx % 2 = 0, 'MALE', 'FEMALE'),
-        '09' + RIGHT('00000000' + CAST(ABS(CHECKSUM(NEWID())) % 100000000 AS VARCHAR), 8),
-        CASE (ABS(CHECKSUM(NEWID())) % 4) 
-            WHEN 0 THEN N'Hà Nội' 
-            WHEN 1 THEN N'Hà Nam' 
-            WHEN 2 THEN N'Bắc Ninh' 
-            ELSE N'Hưng Yên' 
-        END, 
-        'patient123'
-    );
-    SET @pid = SCOPE_IDENTITY();
-    
+INSERT INTO persons (name, dob, sex, tel, address, password)
+VALUES (
+N'Bệnh nhân ' + CAST(@idx AS VARCHAR),
+DATEADD(DAY, - (ABS(CHECKSUM(NEWID())) % 25000) - 1000, GETDATE()),
+IIF(@idx % 2 = 0, 'MALE', 'FEMALE'),
+'09' + RIGHT('00000000' + CAST(ABS(CHECKSUM(NEWID())) % 100000000 AS VARCHAR), 8),
+CASE (ABS(CHECKSUM(NEWID())) % 4)
+WHEN 0 THEN N'Hà Nội'
+WHEN 1 THEN N'Hà Nam'
+WHEN 2 THEN N'Bắc Ninh'
+ELSE N'Hưng Yên'
+END,
+'patient123'
+);
+SET @pid = SCOPE_IDENTITY();
+
     INSERT INTO person_roles (person_id, role) VALUES (@pid, 'PATIENT');
-    INSERT INTO patients (p_person_id, first_seen) VALUES (@pid, IIF(@idx % 5 = 0, 1, 0)); 
-    
+    INSERT INTO patients (p_person_id, first_seen) VALUES (@pid, IIF(@idx % 5 = 0, 1, 0));
+
     SET @idx += 1;
+
 END
 PRINT N'Đã khởi tạo xong Bệnh nhân.';
 
 PRINT N'Đang khởi tạo 2000 Lượt khám (Encounters) kèm logic nghiệp vụ. Vui lòng đợi...';
 
 DECLARE @ValidTimes TABLE (ID INT IDENTITY(1,1), H INT, M INT);
-INSERT INTO @ValidTimes (H, M) VALUES 
+INSERT INTO @ValidTimes (H, M) VALUES
 (6,0), (6,20), (6,40), (7,0), (7,20), (7,40), (8,0), (8,20), (8,40), (9,0), (9,20), (9,40),
 (13,0), (13,20), (13,40), (14,0), (14,20), (14,40), (15,0), (15,20), (15,40);
 
@@ -204,14 +205,14 @@ DECLARE @max_proc_end DATETIME;
 
 WHILE @current_enc <= @total_encounters
 BEGIN
-    DECLARE @rand_patient INT = (SELECT TOP 1 p_person_id FROM patients ORDER BY NEWID());
-    DECLARE @rand_doctor INT = (SELECT TOP 1 d_person_id FROM doctors ORDER BY NEWID());
-    DECLARE @doc_spec VARCHAR(30), @doc_level VARCHAR(36);
-    SELECT @doc_spec = speciality, @doc_level = level FROM doctors WHERE d_person_id = @rand_doctor;
-    
+DECLARE @rand_patient INT = (SELECT TOP 1 p_person_id FROM patients ORDER BY NEWID());
+DECLARE @rand_doctor INT = (SELECT TOP 1 d_person_id FROM doctors ORDER BY NEWID());
+DECLARE @doc_spec VARCHAR(30), @doc_level VARCHAR(36);
+SELECT @doc_spec = speciality, @doc_level = level FROM doctors WHERE d_person_id = @rand_doctor;
+
     DECLARE @rand_staff INT = (ABS(CHECKSUM(NEWID())) % 10) + 1;
 
-    DECLARE @rand_days INT = ABS(CHECKSUM(NEWID())) % 455; 
+    DECLARE @rand_days INT = ABS(CHECKSUM(NEWID())) % 455;
     DECLARE @base_date DATE = DATEADD(DAY, @rand_days, '2025-01-01');
 
     DECLARE @rand_time_id INT = (ABS(CHECKSUM(NEWID())) % 21) + 1;
@@ -230,8 +231,8 @@ BEGIN
         INSERT INTO time_slots (d_person_id, start_time, end_time, status, is_active)
         VALUES (@rand_doctor, @slot_start, @slot_end, IIF(@is_active=1, 'BOOKED', 'BLOCKED'), @is_active);
         SET @slot_id = SCOPE_IDENTITY();
-        
-        IF @is_active = 0 CONTINUE; 
+
+        IF @is_active = 0 CONTINUE;
     END
     ELSE
     BEGIN
@@ -249,19 +250,19 @@ BEGIN
     VALUES (@rand_staff, @rand_patient, @slot_id, @app_status);
     DECLARE @app_id INT = SCOPE_IDENTITY();
 
-    IF @app_status <> 'CHECKED_IN' CONTINUE; 
+    IF @app_status <> 'CHECKED_IN' CONTINUE;
 
     DECLARE @doc_fee DECIMAL(18,0) = IIF(@doc_level = 'PROFESSOR', 500000, 300000);
-    DECLARE @enc_start DATETIME = DATEADD(MINUTE, ABS(CHECKSUM(NEWID())) % 10, @slot_start); 
-    
+    DECLARE @enc_start DATETIME = DATEADD(MINUTE, ABS(CHECKSUM(NEWID())) % 10, @slot_start);
+
     -- Khám lâm sàng bước 1
-    DECLARE @enc_end DATETIME = DATEADD(MINUTE, 10 + (ABS(CHECKSUM(NEWID())) % 10), @enc_start); 
+    DECLARE @enc_end DATETIME = DATEADD(MINUTE, 10 + (ABS(CHECKSUM(NEWID())) % 10), @enc_start);
 
     DECLARE @symptom NVARCHAR(MAX) = N'Đau mỏi chung';
     DECLARE @diagnosis NVARCHAR(MAX) = N'Suy nhược cơ thể';
 
-    IF @doc_spec = 'Pediatrics' 
-    BEGIN 
+    IF @doc_spec = 'Pediatrics'
+    BEGIN
         SET @symptom = IIF(ABS(CHECKSUM(NEWID())) % 2 = 0, N'Trẻ sốt cao, quấy khóc, ho nhiều', N'Trẻ bị nghẹt mũi, khò khè');
         SET @diagnosis = IIF(ABS(CHECKSUM(NEWID())) % 2 = 0, N'Viêm họng cấp ở trẻ', N'Viêm phế quản');
     END
@@ -286,29 +287,29 @@ BEGIN
     VALUES (@app_id, @enc_start, @enc_end, @symptom, @diagnosis, N'Bệnh nhân tuân thủ phác đồ điều trị', @doc_fee);
     DECLARE @enc_id INT = SCOPE_IDENTITY();
 
-    DECLARE @num_procs INT = ABS(CHECKSUM(NEWID())) % 4; 
+    DECLARE @num_procs INT = ABS(CHECKSUM(NEWID())) % 4;
     DECLARE @total_proc_cost DECIMAL(18,0) = 0;
 
     IF @num_procs > 0
     BEGIN
         INSERT INTO procedure_orders (encounter_id, procedure_id, status, result, start_time, end_time)
-        SELECT 
-            @enc_id, procedure_id, 'COMPLETED', 
+        SELECT
+            @enc_id, procedure_id, 'COMPLETED',
             CASE (ABS(CHECKSUM(NEWID())) % 3)
                 WHEN 0 THEN N'Kết quả nằm trong giới hạn bình thường.'
                 WHEN 1 THEN N'Phát hiện dấu hiệu bất thường nhẹ.'
                 ELSE N'Kết quả hiển thị viêm nhiễm.'
             END,
             DATEADD(MINUTE, 5 + (ABS(CHECKSUM(NEWID())) % 10), @enc_end) AS start_time,
-            CASE 
-                WHEN procedure_id = 14 THEN DATEADD(DAY, 3 + (ABS(CHECKSUM(NEWID())) % 3), @enc_end) 
-                WHEN procedure_id IN (10, 15) THEN DATEADD(MINUTE, 45 + (ABS(CHECKSUM(NEWID())) % 15), @enc_end) 
-                ELSE DATEADD(MINUTE, 15 + (ABS(CHECKSUM(NEWID())) % 15), @enc_end) 
+            CASE
+                WHEN procedure_id = 14 THEN DATEADD(DAY, 3 + (ABS(CHECKSUM(NEWID())) % 3), @enc_end)
+                WHEN procedure_id IN (10, 15) THEN DATEADD(MINUTE, 45 + (ABS(CHECKSUM(NEWID())) % 15), @enc_end)
+                ELSE DATEADD(MINUTE, 15 + (ABS(CHECKSUM(NEWID())) % 15), @enc_end)
             END AS end_time
         FROM (
-            SELECT TOP (@num_procs) procedure_id 
-            FROM procedure_catalogs 
-            WHERE 
+            SELECT TOP (@num_procs) procedure_id
+            FROM procedure_catalogs
+            WHERE
                 (@doc_spec = 'Pediatrics' AND procedure_id IN (1, 3, 4, 12)) OR
                 (@doc_spec = 'Obstetrics' AND procedure_id IN (1, 3, 7, 13, 14)) OR
                 (@doc_spec = 'ENT' AND procedure_id IN (10, 11)) OR
@@ -319,12 +320,12 @@ BEGIN
         -- Lấy thời gian kết thúc thủ thuật muộn nhất
         SET @max_proc_end = NULL;
         SELECT @max_proc_end = MAX(end_time) FROM procedure_orders WHERE encounter_id = @enc_id;
-        
+
         IF @max_proc_end IS NOT NULL
         BEGIN
             -- Cập nhật thời gian kết thúc: Cộng thêm 20 đến 90 phút sau khi có kết quả
             SET @enc_end = DATEADD(MINUTE, 20 + (ABS(CHECKSUM(NEWID())) % 71), @max_proc_end);
-            
+
             UPDATE encounters SET end_time = @enc_end WHERE encounter_id = @enc_id;
         END
 
@@ -340,20 +341,20 @@ BEGIN
         DECLARE @pres_id INT = SCOPE_IDENTITY();
 
         DECLARE @num_meds INT = (ABS(CHECKSUM(NEWID())) % 4) + 1;
-        
+
         INSERT INTO prescription_lines (prescription_id, medicine_id, dosage, quantity)
-        SELECT 
-            @pres_id, medicine_id, 
+        SELECT
+            @pres_id, medicine_id,
             CASE (ABS(CHECKSUM(NEWID())) % 3)
                 WHEN 0 THEN N'Sáng 1 - Tối 1'
                 WHEN 1 THEN N'Ngày uống 1 lần'
                 ELSE N'Dùng khi đau/sốt'
-            END, 
+            END,
             (ABS(CHECKSUM(NEWID())) % 10) + 10
         FROM (
-            SELECT TOP (@num_meds) medicine_id, unit 
-            FROM medicines 
-            WHERE 
+            SELECT TOP (@num_meds) medicine_id, unit
+            FROM medicines
+            WHERE
                 (@doc_spec = 'Pediatrics' AND medicine_id IN (6, 17, 18, 19, 20, 21, 22, 23)) OR
                 (@doc_spec = 'Obstetrics' AND medicine_id IN (1, 26, 27, 28, 29, 30)) OR
                 (@doc_spec = 'ENT' AND medicine_id IN (1, 2, 12, 13, 14, 15, 16, 22, 24, 25)) OR
@@ -362,17 +363,18 @@ BEGIN
         ) T;
     END
 
-    DECLARE @pay_method VARCHAR(36) = 
+    DECLARE @pay_method VARCHAR(36) =
         CASE (ABS(CHECKSUM(NEWID())) % 3)
             WHEN 0 THEN 'CASH'
             WHEN 1 THEN 'CARD'
             ELSE 'EWALLET'
         END;
-    
+
     INSERT INTO payments (encounter_id, s_person_id, amount, method, pay_time)
     VALUES (@enc_id, @rand_staff, @doc_fee + @total_proc_cost, @pay_method, @enc_end);
 
     SET @current_enc += 1;
+
 END
 
 PRINT N'✅ HOÀN TẤT! Đã sinh thành công 2000 lượt khám, đơn thuốc, thủ thuật và giao dịch.';
