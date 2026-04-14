@@ -32,22 +32,22 @@ Giúp diễn giải và phân tích dữ liệu nhanh hơn
 
 ### 4 views
 
-![alt text](image.png)
+![alt text](img/image.png)
 
 ### Canvas
 
 Hình ảnh báo cáo
-![alt text](image-1.png)
+![alt text](img/image-1.png)
 
 ### Filters pane
 
 Lọc hình ảnh dữ liệu
-![alt text](image-2.png)
+![alt text](img/image-2.png)
 
 ### Visualizations Pane
 
 Thêm, thay đổi, tuỳ chỉnh data visualization
-![alt text](image-3.png)
+![alt text](img/image-3.png)
 
 ### Data Pane
 
@@ -74,7 +74,7 @@ Cửa sổ preview xuất hiện → Chọn **Load**
 
 ## Xem raw data
 
-![alt text](image-4.png)
+![alt text](img/image-4.png)
 
 ---
 
@@ -85,7 +85,7 @@ Cửa sổ preview xuất hiện → Chọn **Load**
 ### Model view
 
 Có thể xem tất cả các bảng
-![alt text](image-5.png)
+![alt text](img/image-5.png)
 
 * Tự kết nối các liên kết
 
@@ -122,7 +122,7 @@ Nó cho phép người dùng:
 
 → Tất cả biểu đồ trong trang sẽ thay đổi theo lựa chọn đó.
 
-![alt text](image-6.png)
+![alt text](img/image-6.png)
 
 #### Khi nào dùng Slicer?
 
@@ -156,7 +156,7 @@ Loại biến đổi liên quan đến:
 
 ## Loading data
 Trước khi load data cần transform trước
-![alt text](image-7.png)
+![alt text](img/image-7.png)
 
 Sử dụng Power Query Editor — một công cụ cho phép chỉnh sửa dữ liệu trước khi tải vào.
 
@@ -175,15 +175,15 @@ B2: Chọn Transform
 
 B3:
 - Nếu cần xoá hàng và cột thừa:
-![alt text](image-8.png)
+![alt text](img/image-8.png)
 
 - Log thay đổi:
-![alt text](image-9.png)
+![alt text](img/image-9.png)
 
 B4: Chọn Close and apply
 
 *Cách mở khi ở report view*
-![alt text](image-10.png)
+![alt text](img/image-10.png)
 
 ## Transforming and formatting columns
 ### Làm sạch & biến đổi dữ liệu (Transform data)
@@ -237,59 +237,59 @@ Kích thước vòng tròn tỷ lệ với số đơn hàng theo quốc gia.
 
 # Visualizing Data
 ## Visualization options
-![alt text](image-11.png)
+![alt text](img/image-11.png)
 
 ### Column and bar charts
 Dùng để so sánh giá trị giữa các nhóm.
 
 **Bar chart**\
 Thanh nằm ngang
-![alt text](image-12.png)
+![alt text](img/image-12.png)
 
 **Column chart**\
 Thanh nằm dọc
-![alt text](image-13.png)
+![alt text](img/image-13.png)
 
 **Các biến thể**
 - *Stacked bar and column chart*\
 Các phần chồng lên nhau trong cùng một cột/thanh (tổng = toàn bộ thanh)
-![alt text](image-14.png)
+![alt text](img/image-14.png)
 - *Clustered bar and column chart*\
 Nhiều cột đặt cạnh nhau
-![alt text](image-15.png)
+![alt text](img/image-15.png)
 - *100% Stacked*\
  → Thể hiện tỷ lệ %, mỗi thanh luôn = 100%
- ![alt text](image-16.png)
+ ![alt text](img/image-16.png)
  - *Combo chart*\
  Kết hợp Column chart và Line chart
- ![alt text](image-17.png)
+ ![alt text](img/image-17.png)
  
  ### Line chart
  - Hiển thị nhiều đường trong một biểu đồ
 - Thường dùng để thể hiện xu hướng theo thời gian
- ![alt text](image-18.png)
+ ![alt text](img/image-18.png)
 
  ### Area chart
 - Dựa trên line chart
 - Phần giữa trục và đường được tô màu
- ![alt text](image-19.png)
+ ![alt text](img/image-19.png)
 
  ### Pie chart và Donut chart
 - Thể hiện mối quan hệ phần – tổng
 - Donut chart giống pie chart nhưng có lỗ ở giữa
-![alt text](image-20.png)
+![alt text](img/image-20.png)
 ### Treemap
 - Cũng thể hiện mối quan hệ phần – tổng
 - Dùng các hình chữ nhật có kích thước khác nhau để biểu diễn giá trị
-![alt text](image-21.png)
+![alt text](img/image-21.png)
 ### Nhóm biểu đồ hiển thị hiệu suất
 Dùng để hiển thị 1 hoặc vài chỉ số tổng quan:
 - Card → Hiển thị 1 giá trị
-![alt text](image-22.png)
+![alt text](img/image-22.png)
 - Multi-row card → Nhiều giá trị
-![alt text](image-23.png)
+![alt text](img/image-23.png)
 - Gauge và KPI → So sánh thực tế với mục tiêu/kế hoạch
-![alt text](image-24.png)
+![alt text](img/image-24.png)
 ### Table and matrix
 **Table**
 
@@ -305,11 +305,11 @@ Có thể mở rộng (expand) / thu gọn (collapse) theo hàng hoặc cột
 
 Phù hợp khi phân tích theo nhiều cấp độ (ví dụ: vùng, sản phẩm…)
 
-![alt text](image-25.png)
+![alt text](img/image-25.png)
 
 ### Editing visualizations
 Tất cả biểu đồ có thể chỉnh sửa bằng biểu tượng cây cọ (paint brush) trong Power BI.
-![alt text](image-26.png)
+![alt text](img/image-26.png)
 ## Sorting
 Step:
 - Nhấp vào dấu ba chấm ở góc trên phải của axis
@@ -347,9 +347,9 @@ Drill down hoạt động nhờ Hierarchy -> điều hướng giữa các cấp 
 
   ⚠ Lưu ý:
   Tháng January lúc này = tổng January của nhiều năm cộng lại.
-![alt text](image-27.png)
+![alt text](img/image-27.png)
 - Thêm một cấp độ phân cấp vào chế độ xem hiện tại
-![alt text](image-29.png)
+![alt text](img/image-29.png)
 
 ### Filtering
 Chỉ hiển thị dữ liệu theo điều kiện
